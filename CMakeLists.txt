@@ -16,11 +16,13 @@ MESSAGE(SEND_ERROR "CMAKE_BUILD_TYPE must be either Release or Debug")
 return()
 endif()
 
-set(BOOST_VER "1.55.0" CACHE STRING "boost version" )
+set(BOOST_VER "1.67.0" CACHE STRING "boost version" )
 
-set(Boost_USE_MULTITHREADED ON) 
+set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost ${BOOST_VER} REQUIRED COMPONENTS system date_time random) 
+if(NOT MINGW)
+find_package(Boost ${BOOST_VER} REQUIRED COMPONENTS system date_time random)
+endif()
 
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src ALL_SRC)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/internal ALL_SRC)
@@ -28,8 +30,8 @@ file(GLOB ALL_HEADERS ${CMAKE_CURRENT_LIST_DIR}/src/*.h )
 set(SIO_INCLUDEDIR ${CMAKE_CURRENT_LIST_DIR})
 
 add_library(sioclient ${ALL_SRC})
-target_include_directories(sioclient PRIVATE ${Boost_INCLUDE_DIRS} 
-    ${CMAKE_CURRENT_LIST_DIR}/src 
+target_include_directories(sioclient PRIVATE ${Boost_INCLUDE_DIRS}
+	${CMAKE_CURRENT_LIST_DIR}/src
     ${CMAKE_CURRENT_LIST_DIR}/lib/websocketpp 
     ${CMAKE_CURRENT_LIST_DIR}/lib/rapidjson/include
 )
